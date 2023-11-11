@@ -1,0 +1,174 @@
+﻿@model CTNew.Models.Users
+
+@{
+    ViewData["Title"] = "Create";
+}
+<script src="~/lib/jquery/dist/jquery.min.js" />
+
+
+  
+@* <script type="text/javascript">
+    $(document).ready(function () {
+        var items = "<option value='0'>Select</option>";
+        $('#StateId').html(items);
+        $('#CityId').html(items);
+    });
+</script> *@
+<script type="text/javascript">
+   
+    $(document).on('change', '#StateId', function () {
+        //alert('Change Happened');
+        var value = $(this).val();
+
+
+        $.post("@Url.Action("setDropDrownList","Users")", { value: value }, function (data) 
+        {
+            //alert('post is working')
+            
+             $('#CityId').empty();
+             $('#CityId').append("<option> Please Select </option>")
+            //debugger;
+             var list = data;
+           
+            
+            $.each(list, function (index, row) {
+                if (index == 0) {
+                    $('#CityId').append("<option value='" + row.value + "' selected='selected'>" + row.text + "</option>");
+                } else {
+                    $('#CityId').append("<option value='" + row.value + "'>" + row.text + "</option>")
+                }
+
+            });
+        });
+
+    });
+
+</script>
+<h1>Create</h1>
+<hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+    
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label">First Name</label>
+                    <input asp-for="FirstName" class="form-control" value=""/>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label">Last Name</label>
+                    <input asp-for="LastName" class="form-control" value="" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <input type="radio" asp-for="Gender" name="gender" value="1" checked="checked">Female</> &nbsp; &nbsp;
+                <input type="radio" asp-for="Gender"  name="gender" value="2">Male</>
+            </div>
+            
+
+            <div class="form-group" id="dropDownListdiv">
+                        <label class="control-label">State</label>
+                        @Html.DropDownListFor(m => m.StateId, Model.States, "Please select", new { @class = "form-control" })
+                        <br />
+                        <label class="control-label">City</label>
+                        @Html.DropDownListFor(m => m.CityId, Model.Cities, "Please select", new { @class = "form-control" }) 
+                   
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+                <br />
+        </form>
+    </div>
+</div>
+
+<div>
+   <a asp-action="Index">Back to List</a>
+</div>
+
+
+<div class="container">
+    <table class="table table-success table-striped table-responsive table-hover">
+        <thead>
+            <tr>
+                <td>First Name</td>
+                <td>Last Name</td>
+                <td>Gender</td>
+                <td>City</td>
+                <td>State</td>
+                <td>Edit</td>
+                <td>Delete</td>
+            </tr>
+        </thead>
+        <tbody id="tblBody">
+        </tbody>
+    </table>
+
+</div>
+
+<div class="modal" id="EditUser">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Edit User
+                </h4>
+                <button type="button" class="close" onclick="Close();" data-dismiss="modal"><span>x</span></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Edit">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <input type="hidden" asp-for=@Model.UserId class="form-control" />
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Gender" class="control-label"></label>
+
+
+                        <input type="radio" asp-for="Gender" name="gender" value="1"> Female </> &nbsp; &nbsp;
+
+                        <input type="radio" asp-for="Gender" name="gender" value="2">Male</>
+                    </div>
+
+
+                    <div class="form-group" id="dropDownListdiv">
+                        <label class="control-label">State</label>
+                       
+                        @Html.DropDownListFor(m => m.StateId, Model.States, "Please select", new { @class = "form-control" })
+                        <br />
+                        <label class="control-label">City</label>
+                       
+
+                        @Html.DropDownListFor(m => m.CityId, Model.Cities, "Please select", new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Update" data-save="modal" class="btn btn-primary" />
+                        <button type="button" class="btn btn-danger" onclick="Close();" data-dismiss="modal">Close </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/userslist.js"></script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
