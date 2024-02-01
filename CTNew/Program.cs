@@ -19,6 +19,7 @@ namespace CTNew
         {
             CreateHostBuilder(args).Build().Run();
             var builder = WebApplication.CreateBuilder(args);
+            //Dependency Injection for DB Context
             builder.Services.AddDbContext<CodeTestContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CTCon")));
         }
 
